@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Gráficos
+{% endblock %}
+
+{% block main %}
+<style>
+    img:hover {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(2); 
+}
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Distribución de Causas Raíces</h2>
+            <img src="{{ url_for('static', filename='root_cause_distribution.png') }}" alt="Distribución de causa-raíz" width="400px">
+        </div>
+        <div class="col">
+            <h2>Frecuencia de fallas</h2>
+            <img src="{{ url_for('static', filename='failure_types.png') }}" alt="Frecuencia de fallas" width="450px">
+        </div>
+    </div>
+</div>
+{% endblock %}

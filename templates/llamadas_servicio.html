@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Llamadas de Servicio
+{% endblock %}
+
+{% block main %}
+<div class="container py-5">
+    <h2 class="mb-4">Llamadas de Servicio</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <input type="date" id="fecha-filtro" class="form-control" value="{{ hoy }}">
+        </div>
+        <div class="col-md-3">
+            <select id="status-filtro" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_progreso">En Progreso</option>
+                <option value="completado">Completado</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button id="aplicar-filtro" class="btn btn-primary my-2">Aplicar Filtro</button>
+        </div>
+        <div class="col-md-3">
+            <button id="cargar-todo" class="btn btn-secondary my-2">Cargar Todo</button>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Turno</th>
+                    <th>Equipo</th>
+                    <th>Hora de Paro</th>
+                    <th>Hora de Aviso</th>
+                    <th>Reporta</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="llamadas-tabla">
+                {% for llamada in llamadas %}
+                <tr>
+                    <td>{{ llamada.fecha }}</td>
+                    <td>{{ llamada.turno }}</td>
+                    <td>{{ llamada.equipo }}</td>
+                    <td>{{ llamada.hora_paro }}</td>
+                    <td>{{ llamada.hora_aviso }}</td>
+                    <td>{{ llamada.reporta }}</td>
+                    <td><span class="badge {% if llamada.status == 'pendiente' %} bg-danger {% else %} bg-success {% endif %}">{{ llamada.status }}</span></td>
+                    <td>
+                        <a href="{{ url_for('reporte_servicio', llamada_id=llamada.id) }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-file-alt"></i> Reporte
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    function cargarLlamadas(fecha, status) {
+        $.get("/api/llamadas_servicio", { fecha: fecha, status: status }, function(data) {
+            let tbody = $("#llamadas-tabla");
+            tbody.empty();
+            data.forEach(function(llamada) {
+                let row = $("<tr>");
+                row.append($("<td>").text(llamada.fecha));
+                row.append($("<td>").text(llamada.turno));
+                row.append($("<td>").text(llamada.equipo));
+                row.append($("<td>").text(llamada.hora_paro));
+                row.append($("<td>").text(llamada.hora_aviso));
+                row.append($("<td>").text(llamada.reporta));
+                row.append($("<td>").text(llamada.status));
+                let actionCell = $("<td>");
+                actionCell.append(
+                    $("<a>")
+                        .addClass("btn btn-sm btn-primary")
+                        .attr("href", "/reporte_servicio/" + llamada.id)
+                        .html('<i class="fas fa-file-alt"></i> Reporte')
+                );
+                row.append(actionCell);
+                tbody.append(row);
+            });
+        });
+    }
+
+    $("#aplicar-filtro").click(function() {
+        let fecha = $("#fecha-filtro").val();
+        let status = $("#status-filtro").val();
+        cargarLlamadas(fecha, status);
+    });
+
+    $("#cargar-todo").click(function() {
+        $("#fecha-filtro").val("");
+        $("#status-filtro").val("");
+        cargarLlamadas();
+    });
+
+    // Set today's date as default
+    let today = new Date().toISOString().split('T')[0];
+    $("#fecha-filtro").val(today);
+});
+</script>
+{% endblock %}

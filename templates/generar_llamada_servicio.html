@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block title %}
+    Generar llamada de Servicio
+{% endblock %}
+
+{% block main %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Generar Llamada de Servicio</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/generar_llamada_servicio" method="post">
+                        <!-- Date Field - Auto-populated with today's date -->
+                        <div class="mb-3">
+                            <label for="fecha" class="form-label">Fecha</label>
+                            <input type="text" readonly class="form-control" id="fecha" name="fecha" 
+                                   value="{{ today_date }}" readonly>
+                        </div>
+
+                        <!-- Equipment Selection -->
+                        <div class="mb-3">
+                            <label for="equipment" class="form-label">Nombre y No. de la máquina/equipo</label>
+                            <select class="form-select" id="equipment" name="equipment" required>
+                                <option value="" selected disabled>Seleccione un equipo</option>
+                                {% for equipo in equipos %}
+                                <option value="{{ equipo.id }}">
+                                    {{ equipo.nombre }} - No. {{ equipo.numero }} Línea {{ equipo.id_linea }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Shift Selection -->
+                        <div class="mb-3">
+                            <label for="turno" class="form-label">Turno</label>
+                            <select class="form-select" id="turno" name="turno" required>
+                                <option value="" selected disabled>Seleccione el turno</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+
+                        <!-- Time Fields -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="hora_paro" class="form-label">Hora de paro</label>
+                                <input type="time" class="form-control-lg" id="hora_paro" name="hora_paro" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="hora_aviso" class="form-label">Hora de aviso</label>
+                                <input type="time" class="form-control-lg" id="hora_aviso" name="hora_aviso" 
+                                       value="{{ current_time }}" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 justify-content-center">
+                            <button type="submit" class="btn btn-primary">Generar Llamada</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

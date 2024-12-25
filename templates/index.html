@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Inicio
+{% endblock %}
+
+{% block main %}
+    <div class="container text-center">
+        <div class="row justify-content-evenly">
+            {% for llamada, equipo, linea in query %}
+            <div class="col-lg4 col-md-6 col-sm-12">
+                <div class="card bg-light my-4">
+                    <div class="card-header">
+                    Llamada de servicio
+                    </div>
+                    <div class="card-body">
+                    <h5 class="card-title">Reporte para {{ equipo.nombre }}</h5>
+                    <p class="card-text">Fecha: {{ llamada.fecha }}</p>
+                    <p class="card-text">Línea: {{ linea.nombre }}</p>
+                    <p class="card-text">Turno: {{ llamada.turno }}</p>
+                    <p class="card-text">Hora de paro: {{ llamada.hora_paro.strftime('%H:%M') }}</p>
+                    <p class="card-text">Status: <span class="badge {% if llamada.status == 'pendiente' %} bg-danger {% else %} bg-success {% endif %}"> {{ llamada.status }} </span></p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
